@@ -1,0 +1,7 @@
+c:\users\user\documents\visual studio 2013\Projects\Zadachki\Zadachki\bin\Debug\Zadachki.exe.config
+C:\Users\User\documents\visual studio 2013\Projects\Zadachki\Zadachki\bin\Debug\Zadachki.exe
+C:\Users\User\documents\visual studio 2013\Projects\Zadachki\Zadachki\bin\Debug\Zadachki.pdb
+C:\Users\User\documents\visual studio 2013\Projects\Zadachki\Zadachki\obj\Debug\Zadachki.csprojResolveAssemblyReference.cache
+C:\Users\User\documents\visual studio 2013\Projects\Zadachki\Zadachki\obj\Debug\Zadachki.exe
+C:\Users\User\documents\visual studio 2013\Projects\Zadachki\Zadachki\obj\Debug\Zadachki.pdb
+C:\Users\User\documents\visual studio 2013\Projects\Zadachki\Zadachki\bin\Debug\Devart.Data.PostgreSql.Vs.dll
