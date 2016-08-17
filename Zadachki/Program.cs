@@ -21,6 +21,7 @@ namespace Zadachki
             //номеров групп студентов, имеющих оценки, равные только 4 или 5.
 
             //вместо массивов я использовал базу данных
+            //TODO: вынести в отдельную ветку метод без подключения к бд (сделай файловый ввод)
             try
             {
                 string connectionString = ConfigurationManager.ConnectionStrings["MyKey"].ConnectionString;
@@ -29,12 +30,12 @@ namespace Zadachki
                 PgSqlDataAdapter dataAdapter = new PgSqlDataAdapter("", connection);
                 DataSet dataSet = new DataSet();
                 dataAdapter.SelectCommand.CommandText = "SELECT list.\"Lastname\", list.initials, list.\"group\", list.grade FROM  public.list;";
-                //выполнение запроса к базе, запись ответа в dataAdapter
+                //выполнение запроса select к базе, запись ответа в dataAdapter
                 dataAdapter.Fill(dataSet); //выгрузка данных из dataAdapter в структуру dataSet
-                Random rn = new Random();
+                //Random rn = new Random();
                 Student s = new Student();
                 List<Student> ls = new List<Student>();
-                string[] x = new string[10];
+                //string[] x = new string[10];
                 Console.WriteLine("Сырой вывод:");
                 Console.Write("Фамилия ИО\tГруппа\tСредний балл\n");
 
