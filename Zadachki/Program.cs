@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Devart.Data.PostgreSql;
 using System.Data;
 using System.Configuration;
-using System.IO;
 
 
 
@@ -26,7 +23,6 @@ namespace Zadachki
             //вместо массивов я использовал базу данных
 
             bool running = true;
-            
             while (running)
             {
                 Console.Write("Выберите режим работы:\n1. чтение из БД\n2. чтение из файла\n3. ввод из кода\n4. завершение работы\nВаш выбор:");
@@ -56,45 +52,46 @@ namespace Zadachki
         static void runDBmode()
         {
             string connectionString = ConfigurationManager.ConnectionStrings["DBstringKey"].ConnectionString;
-            PgSqlConnection connection = new PgSqlConnection(connectionString);
-            connection.Open(); //подключение к базе на другом хосте в СУБД Postgre
-            PgSqlDataAdapter dataAdapter = new PgSqlDataAdapter("", connection);
-            DataSet dataSet = new DataSet();
-            dataAdapter.SelectCommand.CommandText = "SELECT list.\"Lastname\", list.initials, list.\"group\", list.grade FROM  public.list;";
-            //выполнение запроса select к базе, запись ответа в dataAdapter
-            dataAdapter.Fill(dataSet); //выгрузка данных из dataAdapter в структуру dataSet
-            
-            Student s = new Student();
-            List<Student> ls = new List<Student>();
-            Console.WriteLine("Сырой вывод:");
-            Console.Write("Фамилия ИО\tГруппа\tСредний балл\n");
-
-            foreach (DataTable table in dataSet.Tables)
+            using (PgSqlConnection connection = new PgSqlConnection(connectionString))
             {
-                foreach (DataRow row in table.Rows)
-                {
-                    //создание объекта со значениями полей из базы
-                    s.lastname = ChangeEncoding(row[0].ToString());
-                    s.initials = ChangeEncoding(row[1].ToString());
-                    //TODO: разобраться с этим ужасным кодом
-                    //найти способ читать сразу в win1251 из бд
-                    s.groupn = row[2].ToString();
-                    s.grade = Double.Parse(row[3].ToString());
-                    ls.Add(s);
-                    foreach (DataColumn column in table.Columns)
-                    {
-                        string encBuf;
-                        encBuf = row[column].ToString();
-                        encBuf = ChangeEncoding(encBuf);
-                        Console.Write(encBuf + "\t");
+                connection.Open(); //подключение к базе на другом хосте в СУБД Postgre
+                PgSqlDataAdapter dataAdapter = new PgSqlDataAdapter("", connection);
+                DataSet dataSet = new DataSet();
+                dataAdapter.SelectCommand.CommandText = "SELECT list.\"Lastname\", list.initials, list.\"group\", list.grade FROM  public.list;";
+                //TODO: test @"SELECT list.\"Lastname\", list.initials, list.\"group\", list.grade FROM  public.list;";
+                //выполнение запроса select к базе, запись ответа в dataAdapter
+                dataAdapter.Fill(dataSet); //выгрузка данных из dataAdapter в структуру dataSet
+                Student s = new Student();
+                List<Student> ls = new List<Student>();
+                Console.WriteLine("Сырой вывод:");
+                Console.Write("Фамилия ИО\tГруппа\tСредний балл\n");
 
+                foreach (DataTable table in dataSet.Tables)
+                {
+                    foreach (DataRow row in table.Rows)
+                    {
+                        //создание объекта со значениями полей из базы
+                        s.lastname = ChangeEncoding(row[0].ToString());
+                        s.initials = ChangeEncoding(row[1].ToString());
+                        //TODO: разобраться с этим ужасным кодом
+                        //найти способ читать сразу в win1251 из бд
+                        s.groupn = row[2].ToString();
+                        s.grade = Double.Parse(row[3].ToString());
+                        ls.Add(s);
+                        foreach (DataColumn column in table.Columns)
+                        {
+                            string encBuf;
+                            encBuf = row[column].ToString();
+                            encBuf = ChangeEncoding(encBuf);
+                            Console.Write(encBuf + "\t");
+
+                        }
+                        Console.Write("\n");
                     }
-                    Console.Write("\n");
                 }
+                connection.Close();
+                sortAndShowList(ls);
             }
-            connection.Close();
-                        sortAndShowList(ls);
-            
         }
 
         static void sortAndShowList(List<Student> ls) //вывод содержимого списка в консоль в виде таблицы
@@ -194,5 +191,6 @@ namespace Zadachki
         }
 
     }
+
     
 }
