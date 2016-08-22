@@ -14,6 +14,7 @@ namespace Zadachki
 {
     class Program 
     {
+        enum RunModes : byte { db = 1, file = 2, manual = 3, quit = 4 };
         static void Main(string[] args)
         {
             //вид исходной задачи:
@@ -25,34 +26,36 @@ namespace Zadachki
             //вместо массивов я использовал базу данных
 
             bool running = true;
+            
             while (running)
             {
-                Console.Out.Write("Выберите режим работы:\n1. чтение из БД\n2. чтение из файла\n3. ввод из кода\n4. завершение работы\nВаш выбор:");
-                uint modeApp = 0;
-                while (!uint.TryParse(Console.In.ReadLine(), out modeApp) || 0 == modeApp || modeApp > 4)
+                Console.Write("Выберите режим работы:\n1. чтение из БД\n2. чтение из файла\n3. ввод из кода\n4. завершение работы\nВаш выбор:");
+                byte modeApp = 0;
+                while (!byte.TryParse(Console.ReadLine(), out modeApp) || 0 == modeApp || modeApp > 4)
                 {
-                    Console.Out.WriteLine("Неверный ввод");
+                    Console.WriteLine("Неверный ввод");
                 }
                 try
                 {
-                    switch (modeApp)
+                    RunModes rm = (RunModes)modeApp;
+                    switch (rm)
                     {
-                        case 1: runDBmode(); break;
-                        case 2: runFilemode(); break;
-                        case 3: runBadmode(); break;
-                        case 4: running = false; break;
+                        case RunModes.db: runDBmode(); break;
+                        case RunModes.file: runFilemode(); break;
+                        case RunModes.manual: runBadmode(); break;
+                        case RunModes.quit: running = false; break;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.Out.WriteLine("Не удалось выполнить программу. Текст ошибки: " + ex);
+                    Console.WriteLine("Не удалось выполнить программу. Текст ошибки: " + ex);
                 }
             }
         }
 
         static void runDBmode()
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["dbstringKey"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings["DBstringKey"].ConnectionString;
             PgSqlConnection connection = new PgSqlConnection(connectionString);
             connection.Open(); //подключение к базе на другом хосте в СУБД Postgre
             PgSqlDataAdapter dataAdapter = new PgSqlDataAdapter("", connection);
@@ -101,7 +104,7 @@ namespace Zadachki
             Console.Write("Фамилия ИО\tГруппа\tСредний балл\n");
             foreach (Student st in ls)
             {
-                Console.Out.WriteLine(st.lastname + "\t" + st.initials + "\t" + st.groupn + "\t" + st.grade);
+                Console.WriteLine(st.lastname + "\t" + st.initials + "\t" + st.groupn + "\t" + st.grade);
             }
             Console.Write("\n");
         }
@@ -137,7 +140,7 @@ namespace Zadachki
             {
                 Student s = new Student();
                 List<Student> ls = new List<Student>();
-                string appSettings = ConfigurationManager.AppSettings["filepathKey"];
+                string appSettings = ConfigurationManager.AppSettings["FilepathKey"];
                 string[] lines = System.IO.File.ReadAllLines(appSettings);
 
                 foreach (string line in lines)
@@ -156,7 +159,7 @@ namespace Zadachki
             }
             catch(Exception ex)
             {
-                Console.Out.WriteLine("Не удалось выполнить программу. Текст ошибки: " + ex);
+                Console.WriteLine("Не удалось выполнить программу. Текст ошибки: " + ex);
             }
         }
 
@@ -191,16 +194,5 @@ namespace Zadachki
         }
 
     }
-
-    
-
-    struct Student
-    {
-        public string lastname;
-        public string initials;
-        public string groupn;
-        public double grade;
-    }
-
     
 }
