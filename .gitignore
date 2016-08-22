@@ -6,8 +6,11 @@
 *.user
 *.sln.docstates
 
+
 # Build results
 
+bin/
+obj/
 [Dd]ebug/
 [Rr]elease/
 x64/
